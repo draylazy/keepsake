@@ -55,29 +55,34 @@ export default function Viewer() {
       });
       const img = canvas.toDataURL('image/png');
       
+      const isMobile = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
       let shared = false;
-      try {
-        // Attempt to use Web Share API (especially useful for iOS/Android)
-        const response = await fetch(img);
-        const blob = await response.blob();
-        const file = new File([blob], `${albumData?.album.title || 'Keepsake-Album'}.png`, { type: 'image/png' });
-        
-        if (navigator.canShare && navigator.canShare({ files: [file] })) {
-          await navigator.share({
-            files: [file],
-            title: albumData?.album.title || 'Keepsake Album',
-          });
-          shared = true;
+      
+      if (isMobile) {
+        try {
+          // Attempt to use Web Share API only on mobile devices
+          const response = await fetch(img);
+          const blob = await response.blob();
+          const file = new File([blob], `${albumData?.album.title || 'Keepsake-Album'}.png`, { type: 'image/png' });
+          
+          if (navigator.canShare && navigator.canShare({ files: [file] })) {
+            await navigator.share({
+              files: [file],
+              title: albumData?.album.title || 'Keepsake Album',
+            });
+            shared = true;
+          }
+        } catch (err) {
+          console.warn('Web Share API failed', err);
         }
-      } catch (err) {
-        console.warn('Web Share API failed', err);
       }
 
       if (!shared) {
-        // Standard download link often fails silently on mobile browsers (like iOS Safari or in-app browsers)
-        if (/Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+        if (isMobile) {
+          // Standard download link often fails silently on mobile browsers
           setGeneratedImage(img);
         } else {
+          // Standard download for desktop/laptop
           const link = document.createElement('a');
           link.href = img;
           link.download = `${albumData?.album.title || 'Keepsake-Album'}.png`;
