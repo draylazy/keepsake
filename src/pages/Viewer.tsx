@@ -18,12 +18,20 @@ export default function Viewer() {
   const handleDownload = async () => {
     const el = document.getElementById('album-capture-area');
     if (!el) return;
+    
     setDownloading(true);
+    // Wait for React to re-render the DOM with isCapturing=true
+    await new Promise(resolve => setTimeout(resolve, 150));
+
     try {
       const canvas = await html2canvas(el, { 
         useCORS: true, 
         backgroundColor: getComputedStyle(document.body).backgroundColor,
-        scale: 2 // High quality
+        scale: 2, // High quality
+        windowWidth: el.scrollWidth,
+        windowHeight: el.scrollHeight,
+        width: el.scrollWidth,
+        height: el.scrollHeight
       });
       const img = canvas.toDataURL('image/png');
       const link = document.createElement('a');
@@ -80,14 +88,22 @@ export default function Viewer() {
 
   return (
     <div className="viewer-page">
-      <div id="album-capture-area" style={{ padding: '20px 0', background: 'var(--bg-color)' }}>
-        <div className="viewer-header container">
+      <div 
+        id="album-capture-area" 
+        style={{ 
+          padding: '20px 0', 
+          background: 'var(--bg-color)', 
+          width: downloading ? 'max-content' : '100%',
+          minWidth: '100%'
+        }}
+      >
+        <div className={`viewer-header ${downloading ? '' : 'container'}`}>
           <h1>{album.title}</h1>
           {album.note && <p className="handwritten viewer-note">{album.note}</p>}
         </div>
         
-        <div className="viewer-content container">
-          <AlbumView style={album.style} photos={photos} />
+        <div className={`viewer-content ${downloading ? '' : 'container'}`}>
+          <AlbumView style={album.style} photos={photos} isCapturing={downloading} />
         </div>
       </div>
       

@@ -7,9 +7,12 @@ export default function FilmStrip({ photos, isCapturing }: { photos: { data: str
         <div className="sprockets top"></div>
         <div className="film-content">
           {photos.map((p, i) => (
-            <div key={i} className="film-frame">
-              <img src={p.data} alt={`Frame ${i + 1}`} />
-            </div>
+            <div 
+              key={i} 
+              className="film-frame" 
+              style={{ backgroundImage: `url(${p.data})` }} 
+              aria-label={`Frame ${i + 1}`}
+            />
           ))}
         </div>
         <div className="sprockets bottom"></div>
@@ -52,14 +55,12 @@ export default function FilmStrip({ photos, isCapturing }: { photos: { data: str
         }
         .film-frame {
           height: 250px;
-          background: #222;
+          width: 333px;
+          background-color: #222;
+          background-size: cover;
+          background-position: center;
           border: 2px solid #333;
-        }
-        .film-frame img {
-          height: 100%;
-          width: auto;
-          object-fit: cover;
-          display: block;
+          flex-shrink: 0;
         }
       `}</style>
     </div>

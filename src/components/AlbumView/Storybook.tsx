@@ -15,7 +15,7 @@ export default function Storybook({ photos, isCapturing }: { photos: { data: str
         {photos.map((p, index) => (
           <div className="storybook-frame" key={index}>
             <div className="storybook-photo-wrapper">
-              <img src={p.data} className="storybook-img" />
+              <div className="storybook-img" style={{ backgroundImage: `url(${p.data})` }} />
             </div>
             <div className="storybook-controls" style={{ justifyContent: 'center' }}>
               <span className="storybook-counter handwritten">
@@ -53,6 +53,7 @@ export default function Storybook({ photos, isCapturing }: { photos: { data: str
         }
         .storybook-photo-wrapper {
           width: 100%;
+          height: 327px; /* Fallback for html2canvas since it ignores aspect-ratio */
           aspect-ratio: 4/3;
           display: flex;
           align-items: center;
@@ -63,9 +64,11 @@ export default function Storybook({ photos, isCapturing }: { photos: { data: str
           margin-bottom: 2rem;
         }
         .storybook-img {
-          max-width: 100%;
-          max-height: 100%;
-          object-fit: contain;
+          width: 100%;
+          height: 100%;
+          background-size: contain;
+          background-position: center;
+          background-repeat: no-repeat;
         }
         .storybook-controls {
           display: flex;
@@ -85,11 +88,11 @@ export default function Storybook({ photos, isCapturing }: { photos: { data: str
     <div className="storybook-container">
       <div className="storybook-frame">
         <div className="storybook-photo-wrapper">
-          <img 
+          <div 
             key={currentIndex} 
-            src={photos[currentIndex].data} 
-            alt={`Page ${currentIndex + 1}`} 
             className="storybook-img fade-in"
+            style={{ backgroundImage: `url(${photos[currentIndex].data})` }}
+            aria-label={`Page ${currentIndex + 1}`}
           />
         </div>
         
@@ -129,6 +132,7 @@ export default function Storybook({ photos, isCapturing }: { photos: { data: str
         }
         .storybook-photo-wrapper {
           width: 100%;
+          height: 327px; /* Fallback for html2canvas since it ignores aspect-ratio */
           aspect-ratio: 4/3;
           display: flex;
           align-items: center;
@@ -139,9 +143,11 @@ export default function Storybook({ photos, isCapturing }: { photos: { data: str
           margin-bottom: 2rem;
         }
         .storybook-img {
-          max-width: 100%;
-          max-height: 100%;
-          object-fit: contain;
+          width: 100%;
+          height: 100%;
+          background-size: contain;
+          background-position: center;
+          background-repeat: no-repeat;
         }
         .fade-in {
           animation: fade 0.4s ease-in-out;
