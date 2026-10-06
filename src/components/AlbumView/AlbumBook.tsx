@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default function AlbumBook({ photos }: { photos: { data: string }[] }) {
+export default function AlbumBook({ photos, isCapturing }: { photos: { data: string }[], isCapturing?: boolean }) {
   return (
     <div className="album-book-container">
       <div className="album-book">

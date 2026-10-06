@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default function Scrapbook({ photos }: { photos: { data: string }[] }) {
+export default function Scrapbook({ photos, isCapturing }: { photos: { data: string }[], isCapturing?: boolean }) {
   return (
     <div className="scrapbook-container">
       {photos.map((p, i) => {

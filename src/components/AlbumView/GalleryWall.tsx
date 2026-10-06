@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default function GalleryWall({ photos }: { photos: { data: string }[] }) {
+export default function GalleryWall({ photos, isCapturing }: { photos: { data: string }[], isCapturing?: boolean }) {
   return (
     <div className="gallery-wall-container">
       <div className="gallery-wall">
