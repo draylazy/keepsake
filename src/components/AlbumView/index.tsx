@@ -2,7 +2,6 @@ import React from 'react';
 import type { AlbumStyle } from '../../state/AppContext';
 import Scrapbook from './Scrapbook';
 import Storybook from './Storybook';
-import FilmStrip from './FilmStrip';
 import GalleryWall from './GalleryWall';
 import AlbumBook from './AlbumBook';
 
@@ -18,8 +17,6 @@ export default function AlbumView({ style, photos, isCapturing = false }: AlbumV
       return <Scrapbook photos={photos} isCapturing={isCapturing} />;
     case 'storybook':
       return <Storybook photos={photos} isCapturing={isCapturing} />;
-    case 'filmstrip':
-      return <FilmStrip photos={photos} isCapturing={isCapturing} />;
     case 'gallerywall':
       return <GalleryWall photos={photos} isCapturing={isCapturing} />;
     case 'albumbook':
