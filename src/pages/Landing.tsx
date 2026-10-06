@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppContext } from '../state/AppContext';
 import { resizeImage } from '../services/imageResize';
@@ -8,9 +8,13 @@ import { Camera, ArrowRight } from 'lucide-react';
 export default function Landing() {
   const navigate = useNavigate();
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const { addPhotos } = useAppContext();
+  const { addPhotos, resetApp } = useAppContext();
   const [code, setCode] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
+
+  useEffect(() => {
+    resetApp();
+  }, [resetApp]);
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;

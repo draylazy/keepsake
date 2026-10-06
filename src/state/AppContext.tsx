@@ -22,6 +22,8 @@ interface AppContextType {
   
   note: string;
   setNote: (note: string) => void;
+  
+  resetApp: () => void;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -43,13 +45,21 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     setPhotos(prev => prev.filter(p => p.id !== id));
   };
 
+  const resetApp = () => {
+    setPhotos([]);
+    setAlbumStyle('scrapbook');
+    setTitle('');
+    setNote('');
+  };
+
   return (
     <AppContext.Provider
       value={{
         photos, setPhotos, addPhotos, removePhoto,
         albumStyle, setAlbumStyle,
         title, setTitle,
-        note, setNote
+        note, setNote,
+        resetApp
       }}
     >
       {children}
