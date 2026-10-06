@@ -9,21 +9,22 @@ import AlbumBook from './AlbumBook';
 interface AlbumViewProps {
   style: AlbumStyle;
   photos: { id?: string; index: number; data: string }[];
+  isCapturing?: boolean;
 }
 
-export default function AlbumView({ style, photos }: AlbumViewProps) {
+export default function AlbumView({ style, photos, isCapturing = false }: AlbumViewProps) {
   switch (style) {
     case 'scrapbook':
-      return <Scrapbook photos={photos} />;
+      return <Scrapbook photos={photos} isCapturing={isCapturing} />;
     case 'storybook':
-      return <Storybook photos={photos} />;
+      return <Storybook photos={photos} isCapturing={isCapturing} />;
     case 'filmstrip':
-      return <FilmStrip photos={photos} />;
+      return <FilmStrip photos={photos} isCapturing={isCapturing} />;
     case 'gallerywall':
-      return <GalleryWall photos={photos} />;
+      return <GalleryWall photos={photos} isCapturing={isCapturing} />;
     case 'albumbook':
-      return <AlbumBook photos={photos} />;
+      return <AlbumBook photos={photos} isCapturing={isCapturing} />;
     default:
-      return <Scrapbook photos={photos} />;
+      return <Scrapbook photos={photos} isCapturing={isCapturing} />;
   }
 }

@@ -1,13 +1,85 @@
 import React, { useState } from 'react';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 
-export default function Storybook({ photos }: { photos: { data: string }[] }) {
+export default function Storybook({ photos, isCapturing }: { photos: { data: string }[], isCapturing?: boolean }) {
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const next = () => setCurrentIndex(prev => (prev + 1) % photos.length);
   const prev = () => setCurrentIndex(prev => (prev - 1 + photos.length) % photos.length);
 
   if (photos.length === 0) return null;
+
+  if (isCapturing) {
+    return (
+      <div className="storybook-capture-grid" style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+        {photos.map((p, index) => (
+          <div className="storybook-frame" key={index}>
+            <div className="storybook-photo-wrapper">
+              <img src={p.data} className="storybook-img" />
+            </div>
+            <div className="storybook-controls" style={{ justifyContent: 'center' }}>
+              <span className="storybook-counter handwritten">
+                {index + 1} of {photos.length}
+              </span>
+            </div>
+          </div>
+        ))}
+        
+        <style>{`
+        .storybook-container {
+          display: flex;
+          justify-content: center;
+          padding: 1rem 0;
+        }
+        .storybook-frame {
+          background-color: #fcf9f2;
+          border: 1px solid #e8e3d3;
+          border-radius: 4px 12px 12px 4px;
+          box-shadow: -10px 0 20px rgba(0,0,0,0.05) inset, 0 5px 15px rgba(0,0,0,0.1);
+          padding: 2rem;
+          max-width: 500px;
+          width: 100%;
+          position: relative;
+          margin: 0 auto;
+        }
+        .storybook-frame::before {
+          content: '';
+          position: absolute;
+          left: 10px;
+          top: 0;
+          bottom: 0;
+          width: 2px;
+          background: rgba(0,0,0,0.1);
+        }
+        .storybook-photo-wrapper {
+          width: 100%;
+          aspect-ratio: 4/3;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background: #fff;
+          border: 1px solid #eee;
+          padding: 0.5rem;
+          margin-bottom: 2rem;
+        }
+        .storybook-img {
+          max-width: 100%;
+          max-height: 100%;
+          object-fit: contain;
+        }
+        .storybook-controls {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          color: #333;
+        }
+        .storybook-counter {
+          font-size: 1.5rem;
+        }
+        `}</style>
+      </div>
+    );
+  }
 
   return (
     <div className="storybook-container">

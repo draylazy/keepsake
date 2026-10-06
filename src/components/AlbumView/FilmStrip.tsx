@@ -1,8 +1,8 @@
 import React from 'react';
 
-export default function FilmStrip({ photos }: { photos: { data: string }[] }) {
+export default function FilmStrip({ photos, isCapturing }: { photos: { data: string }[], isCapturing?: boolean }) {
   return (
-    <div className="filmstrip-wrapper">
+    <div className={`filmstrip-wrapper ${isCapturing ? 'capturing' : ''}`}>
       <div className="filmstrip">
         <div className="sprockets top"></div>
         <div className="film-content">
@@ -22,6 +22,10 @@ export default function FilmStrip({ photos }: { photos: { data: string }[] }) {
           padding: 2rem 0;
           background-color: #111;
           border-radius: 4px;
+        }
+        .filmstrip-wrapper.capturing {
+          overflow-x: visible;
+          width: max-content;
         }
         .filmstrip {
           display: inline-block;
