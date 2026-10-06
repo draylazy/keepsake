@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAppContext } from '../state/AppContext';
 import { resizeImage } from '../services/imageResize';
 import Stepper from '../components/Stepper';
-import { Camera, X, ArrowRight } from 'lucide-react';
+import { Camera, X, ArrowRight, ArrowLeft } from 'lucide-react';
 
 export default function Pick() {
   const navigate = useNavigate();
@@ -16,31 +16,33 @@ export default function Pick() {
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files || files.length === 0) return;
-    
+
     // limit max total
     const remainingSlots = 15 - photos.length;
     if (remainingSlots <= 0) return;
-    
+
     const filesToProcess = Array.from(files).slice(0, remainingSlots);
 
     setIsProcessing(true);
     setTotalProcessing(filesToProcess.length);
     setProgress(0);
-    
+
     const newPhotos = [];
     for (let i = 0; i < filesToProcess.length; i++) {
       setProgress(i + 1);
       try {
         const dataUrl = await resizeImage(filesToProcess[i]);
-        newPhotos.push({ id: crypto.randomUUID(), data: dataUrl });
+        const fallbackId = Date.now().toString() + Math.random().toString(36).substring(2, 9);
+        const uuid = (typeof crypto !== 'undefined' && crypto.randomUUID) ? crypto.randomUUID() : fallbackId;
+        newPhotos.push({ id: uuid, data: dataUrl });
       } catch (err) {
         console.error('Failed to resize', err);
       }
     }
-    
+
     addPhotos(newPhotos);
     setIsProcessing(false);
-    
+
     // Clear input so same file can be picked again if removed
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
@@ -48,9 +50,17 @@ export default function Pick() {
   };
 
   return (
-    <div className="container">
+    <div className="container" style={{ position: 'relative' }}>
+      <button
+        onClick={() => navigate('/')}
+        className="back-nav-btn"
+      >
+        <ArrowLeft size={18} />
+        Back to Home
+      </button>
+
       <Stepper currentStep={1} />
-      
+
       <div className="header">
         <h2>Choose your photos</h2>
         <p>{photos.length} of 15 added</p>
@@ -65,16 +75,17 @@ export default function Pick() {
                 <X size={16} />
               </button>
             </div>
-            <input 
-              type="text" 
-              placeholder="Add note..." 
+            <input
+              type="text"
+              placeholder="Add note..."
               className="photo-note-input"
               value={p.label || ''}
+              maxLength={15}
               onChange={(e) => updatePhotoLabel(p.id, e.target.value)}
             />
           </div>
         ))}
-        
+
         {photos.length < 15 && (
           <div className="add-more" onClick={() => !isProcessing && fileInputRef.current?.click()}>
             <Camera size={24} />
@@ -82,7 +93,7 @@ export default function Pick() {
           </div>
         )}
       </div>
-      
+
       {isProcessing && (
         <div className="processing-notice">
           Preparing photo {progress} of {totalProcessing}…
@@ -90,16 +101,16 @@ export default function Pick() {
       )}
 
       <div className="actions" style={{ marginTop: '2rem', textAlign: 'center' }}>
-        <input 
-          type="file" 
-          accept="image/*" 
-          multiple 
-          ref={fileInputRef} 
-          style={{ display: 'none' }} 
+        <input
+          type="file"
+          accept="image/*"
+          multiple
+          ref={fileInputRef}
+          style={{ display: 'none' }}
           onChange={handleFileChange}
         />
-        <button 
-          className="btn-primary" 
+        <button
+          className="btn-primary"
           disabled={photos.length === 0 || isProcessing}
           onClick={() => navigate('/style')}
         >
@@ -157,22 +168,41 @@ export default function Pick() {
         .remove-btn:hover {
           background: rgba(0,0,0,0.8);
         }
+        .back-nav-btn {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.5rem;
+          margin-bottom: 1rem;
+          color: var(--text-color);
+          opacity: 0.8;
+          background: none;
+          border: none;
+          cursor: pointer;
+          padding: 0;
+          font-family: inherit;
+          font-size: 1rem;
+          transition: color 0.2s;
+        }
+        .back-nav-btn:hover {
+          color: #E3A654;
+          opacity: 1;
+        }
         .add-more {
           aspect-ratio: 1;
           border-radius: 8px;
-          border: 2px dashed var(--line-color);
+          border: 2px dashed var(--add-more-color);
           display: flex;
           flex-direction: column;
           align-items: center;
           justify-content: center;
           gap: 0.5rem;
           cursor: pointer;
-          color: var(--line-color);
+          color: var(--add-more-color);
           transition: all 0.2s;
         }
         .add-more:hover {
-          border-color: var(--text-color);
-          color: var(--text-color);
+          border-color: #E3A654;
+          color: #E3A654;
         }
         .processing-notice {
           text-align: center;

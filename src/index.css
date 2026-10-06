@@ -1,20 +1,32 @@
-:root {
+:root, :root[data-theme="light"] {
   /* Light theme */
-  --bg-color: #eeede8;
+  --bg-color: #e6d6be;
   --text-color: #23302c;
   --card-bg: #fbfaf7;
   --line-color: #cfcdc4;
   --btn-primary-bg: #1f3a34;
   --btn-primary-text: #f6f5f1;
   --accent-gold: #e3a63a;
+  --add-more-color: #3c524b;
 
   --font-heading: 'Young Serif', serif;
   --font-handwritten: 'Caveat', cursive;
   --font-body: Georgia, serif;
 }
 
+:root[data-theme="dark"] {
+  --bg-color: #1a1c1a;
+  --text-color: #eeede8;
+  --card-bg: #2a2e2b;
+  --line-color: #434c49;
+  --btn-primary-bg: #3c5e53;
+  --btn-primary-text: #fbfaf7;
+  --accent-gold: #d89b34;
+  --add-more-color: #cfcdc4;
+}
+
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not([data-theme="light"]) {
     --bg-color: #1a1c1a;
     --text-color: #eeede8;
     --card-bg: #2a2e2b;
@@ -22,6 +34,7 @@
     --btn-primary-bg: #3c5e53;
     --btn-primary-text: #fbfaf7;
     --accent-gold: #d89b34;
+    --add-more-color: #cfcdc4;
   }
 }
 
@@ -69,7 +82,7 @@ button {
   color: inherit;
 }
 
-button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visible {
+button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible {
   outline: 2px solid var(--accent-gold);
   outline-offset: 2px;
 }
@@ -80,7 +93,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
   padding: 0.75rem 1.5rem;
   border-radius: 8px;
   font-size: 1.1rem;
-  transition: opacity 0.2s, transform 0.1s;
+  transition: all 0.2s;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -88,7 +101,8 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
 }
 
 .btn-primary:hover:not(:disabled) {
-  opacity: 0.9;
+  background-color: #E3A654;
+  color: #fff;
 }
 
 .btn-primary:active:not(:disabled) {
@@ -107,7 +121,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
   padding: 0.75rem 1.5rem;
   border-radius: 8px;
   font-size: 1.1rem;
-  transition: background-color 0.2s;
+  transition: all 0.2s;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -115,10 +129,11 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
 }
 
 .btn-secondary:hover:not(:disabled) {
-  background-color: var(--card-bg);
+  border-color: #E3A654;
+  color: #E3A654;
 }
 
-input[type="text"], textarea {
+input[type="text"], textarea, select {
   width: 100%;
   padding: 0.75rem;
   border: 1px solid var(--line-color);
@@ -127,6 +142,10 @@ input[type="text"], textarea {
   color: var(--text-color);
   font-family: var(--font-body);
   font-size: 1rem;
+}
+
+select {
+  cursor: pointer;
 }
 
 input::placeholder, textarea::placeholder {

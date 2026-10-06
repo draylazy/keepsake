@@ -11,6 +11,8 @@ import StyleSelector from './pages/Style';
 import Share from './pages/Share';
 import Viewer from './pages/Viewer';
 
+import ThemeToggle from './components/ThemeToggle';
+
 function App() {
   const [isReady, setIsReady] = useState(false);
 
@@ -28,6 +30,7 @@ function App() {
 
   return (
     <AppProvider>
+      <ThemeToggle />
       <HashRouter>
         <Routes>
           <Route path="/" element={<Landing />} />
