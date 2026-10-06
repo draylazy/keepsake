@@ -1,5 +1,5 @@
 import { initializeApp } from 'firebase/app';
-import { getFirestore, doc, getDoc, collection, getDocs, writeBatch, query, orderBy } from 'firebase/firestore';
+import { getFirestore, doc, getDoc, collection, getDocs, writeBatch, query, orderBy, where, deleteDoc } from 'firebase/firestore';
 import { getAuth, signInAnonymously } from 'firebase/auth';
 import type { StorageService, AlbumData, PhotoData } from './storage';
 
@@ -38,7 +38,7 @@ export const firestoreService: StorageService = {
     photos.forEach(photo => {
       // document ID is just the index as string
       const photoRef = doc(db, 'albums', code, 'photos', photo.index.toString());
-      batch.set(photoRef, { index: photo.index, data: photo.data });
+      batch.set(photoRef, { index: photo.index, data: photo.data, createdAt: album.createdAt });
     });
     
     await batch.commit();
@@ -66,5 +66,29 @@ export const firestoreService: StorageService = {
     });
     
     return { album, photos };
+  }
+};
+
+export const cleanupExpiredAlbums = async () => {
+  if (!isFirebaseConfigured || !auth.currentUser) return;
+  try {
+    const expiredTime = Date.now() - 86400000;
+    const albumsRef = collection(db, 'albums');
+    const q = query(albumsRef, where('createdAt', '<=', expiredTime));
+    const snaps = await getDocs(q);
+    
+    for (const albumDoc of snaps.docs) {
+      const code = albumDoc.id;
+      const photosRef = collection(db, 'albums', code, 'photos');
+      const pq = query(photosRef, where('createdAt', '<=', expiredTime));
+      const pSnaps = await getDocs(pq);
+      
+      const batch = writeBatch(db);
+      pSnaps.forEach(pDoc => batch.delete(pDoc.ref));
+      batch.delete(albumDoc.ref);
+      await batch.commit();
+    }
+  } catch (err) {
+    console.error("Cleanup failed silently", err);
   }
 };

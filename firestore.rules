@@ -8,9 +8,10 @@ service cloud.firestore {
     }
 
     match /albums/{code} {
-      // Anyone can read an album by its code (get), but no listing allowed
-      allow get: if true;
-      allow list: if false;
+      // Anyone can read an album by its code if it's less than 24 hours old
+      allow get: if resource.data.createdAt > request.time.toMillis() - 86400000;
+      // Allow listing ONLY for expired albums so our cleanup script can find them
+      allow list: if resource.data.createdAt <= request.time.toMillis() - 86400000;
       
       // Allow creation for signed-in users only
       allow create: if request.auth != null
@@ -23,12 +24,14 @@ service cloud.firestore {
                     && request.resource.data.count >= 1
                     && request.resource.data.count <= 15;
                     
-      // No updates or deletes from clients
-      allow update, delete: if false;
+      allow update: if false;
+      // Allow delete ONLY for expired albums
+      allow delete: if resource.data.createdAt <= request.time.toMillis() - 86400000;
       
       match /photos/{index} {
-        // Anyone can read the photos for an album
-        allow read: if true;
+        // Anyone can read the photos if they are less than 24h old
+        allow get: if resource.data.createdAt > request.time.toMillis() - 86400000;
+        allow list: if resource.data.createdAt <= request.time.toMillis() - 86400000;
         
         // Allow creation for signed-in users
         allow create: if request.auth != null
@@ -39,8 +42,10 @@ service cloud.firestore {
                       && request.resource.data.index >= 0
                       && request.resource.data.index <= 14;
                       
-        // No updates or deletes
-        allow update, delete: if false;
+        // Allow update only if false
+        allow update: if false;
+        // Allow delete for expired photos
+        allow delete: if resource.data.createdAt <= request.time.toMillis() - 86400000;
       }
     }
   }

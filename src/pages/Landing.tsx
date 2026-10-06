@@ -2,7 +2,7 @@ import React, { useRef, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppContext } from '../state/AppContext';
 import { resizeImage } from '../services/imageResize';
-import { isFirebaseConfigured } from '../services/firestore';
+import { isFirebaseConfigured, cleanupExpiredAlbums } from '../services/firestore';
 import { Camera, ArrowRight } from 'lucide-react';
 
 export default function Landing() {
@@ -14,6 +14,9 @@ export default function Landing() {
 
   useEffect(() => {
     resetApp();
+    if (isFirebaseConfigured) {
+      cleanupExpiredAlbums();
+    }
   }, [resetApp]);
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {

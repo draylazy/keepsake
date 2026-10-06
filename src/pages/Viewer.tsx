@@ -3,7 +3,8 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { getStorageService } from '../services/storage';
 import type { AlbumData, PhotoData } from '../services/storage';
 import AlbumView from '../components/AlbumView';
-import { Camera } from 'lucide-react';
+import { Camera, Download } from 'lucide-react';
+import html2canvas from 'html2canvas';
 
 export default function Viewer() {
   const { code } = useParams<{ code: string }>();
@@ -12,6 +13,28 @@ export default function Viewer() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [albumData, setAlbumData] = useState<{ album: AlbumData, photos: PhotoData[] } | null>(null);
+  const [downloading, setDownloading] = useState(false);
+
+  const handleDownload = async () => {
+    const el = document.getElementById('album-capture-area');
+    if (!el) return;
+    setDownloading(true);
+    try {
+      const canvas = await html2canvas(el, { 
+        useCORS: true, 
+        backgroundColor: getComputedStyle(document.body).backgroundColor,
+        scale: 2 // High quality
+      });
+      const img = canvas.toDataURL('image/png');
+      const link = document.createElement('a');
+      link.href = img;
+      link.download = `${albumData?.album.title || 'Keepsake-Album'}.png`;
+      link.click();
+    } catch (e) {
+      console.error("Failed to capture album", e);
+    }
+    setDownloading(false);
+  };
 
   useEffect(() => {
     async function loadAlbum() {
@@ -57,20 +80,29 @@ export default function Viewer() {
 
   return (
     <div className="viewer-page">
-      <div className="viewer-header container">
-        <h1>{album.title}</h1>
-        {album.note && <p className="handwritten viewer-note">{album.note}</p>}
-      </div>
-      
-      <div className="viewer-content container">
-        <AlbumView style={album.style} photos={photos} />
+      <div id="album-capture-area" style={{ padding: '20px 0', background: 'var(--bg-color)' }}>
+        <div className="viewer-header container">
+          <h1>{album.title}</h1>
+          {album.note && <p className="handwritten viewer-note">{album.note}</p>}
+        </div>
+        
+        <div className="viewer-content container">
+          <AlbumView style={album.style} photos={photos} />
+        </div>
       </div>
       
       <div className="viewer-footer container">
-        <button className="btn-secondary" onClick={() => navigate('/')}>
-          <Camera size={20} />
-          Make your own album
-        </button>
+        <div className="action-buttons">
+          <button className="btn-primary" onClick={handleDownload} disabled={downloading}>
+            <Download size={20} />
+            {downloading ? 'Saving Image...' : 'Download Album'}
+          </button>
+          
+          <button className="btn-secondary" onClick={() => navigate('/')}>
+            <Camera size={20} />
+            Make your own
+          </button>
+        </div>
       </div>
       
       <style>{`
@@ -99,9 +131,16 @@ export default function Viewer() {
           width: 100%;
         }
         .viewer-footer {
-          margin-top: 4rem;
+          margin-top: 2rem;
           padding-bottom: 3rem;
-          text-align: center;
+          display: flex;
+          justify-content: center;
+        }
+        .action-buttons {
+          display: flex;
+          gap: 1rem;
+          flex-wrap: wrap;
+          justify-content: center;
         }
         .skeleton-album {
           width: 100%;
