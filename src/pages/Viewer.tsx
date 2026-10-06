@@ -14,6 +14,7 @@ export default function Viewer() {
   const [error, setError] = useState('');
   const [albumData, setAlbumData] = useState<{ album: AlbumData, photos: PhotoData[] } | null>(null);
   const [downloading, setDownloading] = useState(false);
+  const [generatedImage, setGeneratedImage] = useState<string | null>(null);
 
   const handleDownload = async () => {
     const el = document.getElementById('album-capture-area');
@@ -53,10 +54,36 @@ export default function Viewer() {
         height: targetHeight
       });
       const img = canvas.toDataURL('image/png');
-      const link = document.createElement('a');
-      link.href = img;
-      link.download = `${albumData?.album.title || 'Keepsake-Album'}.png`;
-      link.click();
+      
+      let shared = false;
+      try {
+        // Attempt to use Web Share API (especially useful for iOS/Android)
+        const response = await fetch(img);
+        const blob = await response.blob();
+        const file = new File([blob], `${albumData?.album.title || 'Keepsake-Album'}.png`, { type: 'image/png' });
+        
+        if (navigator.canShare && navigator.canShare({ files: [file] })) {
+          await navigator.share({
+            files: [file],
+            title: albumData?.album.title || 'Keepsake Album',
+          });
+          shared = true;
+        }
+      } catch (err) {
+        console.warn('Web Share API failed', err);
+      }
+
+      if (!shared) {
+        // Standard download link often fails silently on mobile browsers (like iOS Safari or in-app browsers)
+        if (/Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+          setGeneratedImage(img);
+        } else {
+          const link = document.createElement('a');
+          link.href = img;
+          link.download = `${albumData?.album.title || 'Keepsake-Album'}.png`;
+          link.click();
+        }
+      }
     } catch (e) {
       console.error("Failed to capture album", e);
     } finally {
@@ -207,6 +234,21 @@ export default function Viewer() {
           100% { background-position: -200% 0; }
         }
       `}</style>
+      
+      {generatedImage && (
+        <div className="modal-overlay" onClick={() => setGeneratedImage(null)} style={{
+          position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, 
+          backgroundColor: 'rgba(0,0,0,0.85)', zIndex: 9999,
+          display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+          padding: '2rem'
+        }}>
+          <p style={{ color: 'white', marginBottom: '1rem', fontWeight: 'bold', fontSize: '1.2rem', textAlign: 'center' }}>
+            Long-press the image to save it to your photos!
+          </p>
+          <img src={generatedImage} style={{ maxWidth: '100%', maxHeight: '70vh', objectFit: 'contain', borderRadius: '8px', boxShadow: '0 4px 20px rgba(0,0,0,0.5)' }} onClick={e => e.stopPropagation()} />
+          <button className="btn-secondary" style={{ marginTop: '1.5rem', background: 'white' }} onClick={() => setGeneratedImage(null)}>Close</button>
+        </div>
+      )}
     </div>
   );
 }
