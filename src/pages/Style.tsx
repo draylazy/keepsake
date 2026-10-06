@@ -21,7 +21,6 @@ export default function StyleSelector() {
   const styles: { id: AlbumStyle; label: string }[] = [
     { id: 'scrapbook', label: 'Scrapbook' },
     { id: 'storybook', label: 'Storybook' },
-    { id: 'filmstrip', label: 'Film strip' },
     { id: 'gallerywall', label: 'Gallery wall' },
     { id: 'albumbook', label: 'Album book' },
   ];

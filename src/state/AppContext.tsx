@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState } from 'react';
 import type { ReactNode } from 'react';
 
-export type AlbumStyle = 'scrapbook' | 'storybook' | 'filmstrip' | 'gallerywall' | 'albumbook';
+export type AlbumStyle = 'scrapbook' | 'storybook' | 'gallerywall' | 'albumbook';
 
 interface Photo {
   id: string; // just an internal uuid or timestamp
