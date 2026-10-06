@@ -1,0 +1,112 @@
+import React, { useState } from 'react';
+import { ArrowLeft, ArrowRight } from 'lucide-react';
+
+export default function Storybook({ photos }: { photos: { data: string }[] }) {
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  const next = () => setCurrentIndex(prev => (prev + 1) % photos.length);
+  const prev = () => setCurrentIndex(prev => (prev - 1 + photos.length) % photos.length);
+
+  if (photos.length === 0) return null;
+
+  return (
+    <div className="storybook-container">
+      <div className="storybook-frame">
+        <div className="storybook-photo-wrapper">
+          <img 
+            key={currentIndex} 
+            src={photos[currentIndex].data} 
+            alt={`Page ${currentIndex + 1}`} 
+            className="storybook-img fade-in"
+          />
+        </div>
+        
+        <div className="storybook-controls">
+          <button onClick={prev} aria-label="Previous page"><ArrowLeft /></button>
+          <span className="storybook-counter handwritten">
+            {currentIndex + 1} of {photos.length}
+          </span>
+          <button onClick={next} aria-label="Next page"><ArrowRight /></button>
+        </div>
+      </div>
+      
+      <style>{`
+        .storybook-container {
+          display: flex;
+          justify-content: center;
+          padding: 1rem 0;
+        }
+        .storybook-frame {
+          background-color: #fcf9f2;
+          border: 1px solid #e8e3d3;
+          border-radius: 4px 12px 12px 4px;
+          box-shadow: -10px 0 20px rgba(0,0,0,0.05) inset, 0 5px 15px rgba(0,0,0,0.1);
+          padding: 2rem;
+          max-width: 500px;
+          width: 100%;
+          position: relative;
+        }
+        .storybook-frame::before {
+          content: '';
+          position: absolute;
+          left: 10px;
+          top: 0;
+          bottom: 0;
+          width: 2px;
+          background: rgba(0,0,0,0.1);
+        }
+        .storybook-photo-wrapper {
+          width: 100%;
+          aspect-ratio: 4/3;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background: #fff;
+          border: 1px solid #eee;
+          padding: 0.5rem;
+          margin-bottom: 2rem;
+        }
+        .storybook-img {
+          max-width: 100%;
+          max-height: 100%;
+          object-fit: contain;
+        }
+        .fade-in {
+          animation: fade 0.4s ease-in-out;
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .fade-in {
+            animation: none;
+          }
+        }
+        @keyframes fade {
+          from { opacity: 0; transform: translateX(10px); }
+          to { opacity: 1; transform: translateX(0); }
+        }
+        .storybook-controls {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          color: #333;
+        }
+        .storybook-controls button {
+          background: transparent;
+          border: none;
+          cursor: pointer;
+          color: #555;
+          padding: 0.5rem;
+          display: flex;
+          align-items: center;
+          transition: transform 0.2s;
+        }
+        .storybook-controls button:hover {
+          transform: scale(1.1);
+          color: var(--accent-gold);
+        }
+        .storybook-counter {
+          font-size: 1.5rem;
+        }
+      `}</style>
+    </div>
+  );
+}

@@ -1,0 +1,47 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Allowed album styles
+    function isValidStyle(style) {
+      return style in ['scrapbook', 'storybook', 'filmstrip', 'gallerywall', 'albumbook'];
+    }
+
+    match /albums/{code} {
+      // Anyone can read an album by its code (get), but no listing allowed
+      allow get: if true;
+      allow list: if false;
+      
+      // Allow creation for signed-in users only
+      allow create: if request.auth != null
+                    // Cannot overwrite existing album
+                    && !exists(/databases/$(database)/documents/albums/$(code))
+                    // Validate fields
+                    && isValidStyle(request.resource.data.style)
+                    && request.resource.data.title.size() <= 60
+                    && request.resource.data.note.size() <= 200
+                    && request.resource.data.count >= 1
+                    && request.resource.data.count <= 15;
+                    
+      // No updates or deletes from clients
+      allow update, delete: if false;
+      
+      match /photos/{index} {
+        // Anyone can read the photos for an album
+        allow read: if true;
+        
+        // Allow creation for signed-in users
+        allow create: if request.auth != null
+                      // Data must be a base64 string under ~300KB
+                      && request.resource.data.data is string
+                      && request.resource.data.data.size() < 300000
+                      // Index must be a valid number matching the limit
+                      && request.resource.data.index >= 0
+                      && request.resource.data.index <= 14;
+                      
+        // No updates or deletes
+        allow update, delete: if false;
+      }
+    }
+  }
+}
