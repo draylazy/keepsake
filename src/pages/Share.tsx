@@ -16,7 +16,7 @@ function generateCode() {
 
 export default function Share() {
   const navigate = useNavigate();
-  const { photos, albumStyle, title, setTitle, note, setNote } = useAppContext();
+  const { photos, albumStyle, title, setTitle, note, setNote, customizations } = useAppContext();
   
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState('');
@@ -45,12 +45,14 @@ export default function Share() {
       title: title.trim(),
       note: note.trim(),
       count: photos.length,
-      createdAt: Date.now()
+      createdAt: Date.now(),
+      customizations
     };
     
     const photosData = photos.map((p, i) => ({
       index: i,
-      data: p.data
+      data: p.data,
+      label: p.label
     }));
 
     try {

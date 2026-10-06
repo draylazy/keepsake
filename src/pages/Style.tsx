@@ -8,7 +8,7 @@ import { ArrowRight, ArrowLeft } from 'lucide-react';
 
 export default function StyleSelector() {
   const navigate = useNavigate();
-  const { photos, albumStyle, setAlbumStyle } = useAppContext();
+  const { photos, albumStyle, setAlbumStyle, customizations, updateCustomization } = useAppContext();
 
   useEffect(() => {
     if (photos.length === 0) {
@@ -51,7 +51,49 @@ export default function StyleSelector() {
       </div>
 
       <div className="preview-container">
-        <AlbumView style={albumStyle} photos={previewPhotos} />
+        <AlbumView style={albumStyle} photos={previewPhotos} customizations={customizations} />
+      </div>
+
+      <div className="customization-panel">
+        <h3>Customize Appearance</h3>
+        <div className="customization-grid">
+          <div className="customization-item">
+            <label>Frame Color</label>
+            <input 
+              type="color" 
+              value={customizations.frameColor} 
+              onChange={e => updateCustomization('frameColor', e.target.value)} 
+            />
+          </div>
+          <div className="customization-item">
+            <label>Background Color</label>
+            <input 
+              type="color" 
+              value={customizations.bgColor || '#5a6660'} 
+              onChange={e => updateCustomization('bgColor', e.target.value)} 
+            />
+          </div>
+          <div className="customization-item">
+            <label>Font Color</label>
+            <input 
+              type="color" 
+              value={customizations.fontColor} 
+              onChange={e => updateCustomization('fontColor', e.target.value)} 
+            />
+          </div>
+          <div className="customization-item">
+            <label>Font Family</label>
+            <select 
+              value={customizations.fontFamily} 
+              onChange={e => updateCustomization('fontFamily', e.target.value)}
+            >
+              <option value="'Caveat', cursive">Handwritten (Caveat)</option>
+              <option value="serif">Serif</option>
+              <option value="sans-serif">Sans-serif</option>
+              <option value="monospace">Monospace</option>
+            </select>
+          </div>
+        </div>
       </div>
 
       <div className="actions" style={{ marginTop: '2rem', display: 'flex', justifyContent: 'space-between' }}>
@@ -93,6 +135,48 @@ export default function StyleSelector() {
           min-height: 400px;
           border-radius: 8px;
           overflow: hidden;
+          margin-bottom: 2rem;
+        }
+        .customization-panel {
+          background: var(--card-bg);
+          padding: 1.5rem;
+          border-radius: 8px;
+          border: 1px solid var(--line-color);
+        }
+        .customization-panel h3 {
+          margin-top: 0;
+          margin-bottom: 1rem;
+          text-align: center;
+        }
+        .customization-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+          gap: 1rem;
+        }
+        .customization-item {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 0.5rem;
+        }
+        .customization-item label {
+          font-size: 0.9rem;
+          font-weight: bold;
+        }
+        .customization-item input[type="color"] {
+          width: 50px;
+          height: 50px;
+          padding: 0;
+          border: none;
+          border-radius: 4px;
+          cursor: pointer;
+        }
+        .customization-item select {
+          padding: 0.5rem;
+          border-radius: 4px;
+          border: 1px solid var(--line-color);
+          background: var(--bg-color);
+          color: var(--text-color);
         }
       `}</style>
     </div>

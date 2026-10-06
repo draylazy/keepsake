@@ -6,6 +6,14 @@ export type AlbumStyle = 'scrapbook' | 'storybook' | 'gallerywall' | 'albumbook'
 interface Photo {
   id: string; // just an internal uuid or timestamp
   data: string; // base64 data URL
+  label?: string; // optional label/note for the picture
+}
+
+export interface Customizations {
+  frameColor: string;
+  bgColor: string;
+  fontColor: string;
+  fontFamily: string;
 }
 
 interface AppContextType {
@@ -13,6 +21,7 @@ interface AppContextType {
   setPhotos: React.Dispatch<React.SetStateAction<Photo[]>>;
   addPhotos: (newPhotos: Photo[]) => void;
   removePhoto: (id: string) => void;
+  updatePhotoLabel: (id: string, label: string) => void;
   
   albumStyle: AlbumStyle;
   setAlbumStyle: (style: AlbumStyle) => void;
@@ -22,6 +31,10 @@ interface AppContextType {
   
   note: string;
   setNote: (note: string) => void;
+  
+  customizations: Customizations;
+  setCustomizations: React.Dispatch<React.SetStateAction<Customizations>>;
+  updateCustomization: (key: keyof Customizations, value: string) => void;
   
   resetApp: () => void;
 }
@@ -33,6 +46,12 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
   const [albumStyle, setAlbumStyle] = useState<AlbumStyle>('scrapbook');
   const [title, setTitle] = useState('');
   const [note, setNote] = useState('');
+  const [customizations, setCustomizations] = useState<Customizations>({
+    frameColor: '#ffffff',
+    bgColor: '',
+    fontColor: '#333333',
+    fontFamily: "'Caveat', cursive"
+  });
 
   const addPhotos = (newPhotos: Photo[]) => {
     setPhotos(prev => {
@@ -45,20 +64,35 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     setPhotos(prev => prev.filter(p => p.id !== id));
   };
 
+  const updatePhotoLabel = (id: string, label: string) => {
+    setPhotos(prev => prev.map(p => p.id === id ? { ...p, label } : p));
+  };
+
+  const updateCustomization = (key: keyof Customizations, value: string) => {
+    setCustomizations(prev => ({ ...prev, [key]: value }));
+  };
+
   const resetApp = React.useCallback(() => {
     setPhotos([]);
     setAlbumStyle('scrapbook');
     setTitle('');
     setNote('');
+    setCustomizations({
+      frameColor: '#ffffff',
+      bgColor: '',
+      fontColor: '#333333',
+      fontFamily: "'Caveat', cursive"
+    });
   }, []);
 
   return (
     <AppContext.Provider
       value={{
-        photos, setPhotos, addPhotos, removePhoto,
+        photos, setPhotos, addPhotos, removePhoto, updatePhotoLabel,
         albumStyle, setAlbumStyle,
         title, setTitle,
         note, setNote,
+        customizations, setCustomizations, updateCustomization,
         resetApp
       }}
     >

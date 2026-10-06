@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 
-export default function Storybook({ photos, isCapturing }: { photos: { data: string }[], isCapturing?: boolean }) {
+export default function Storybook({ photos, isCapturing, customizations }: { photos: { data: string; label?: string }[], isCapturing?: boolean, customizations?: any }) {
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const next = () => setCurrentIndex(prev => (prev + 1) % photos.length);
@@ -11,12 +11,24 @@ export default function Storybook({ photos, isCapturing }: { photos: { data: str
 
   if (isCapturing) {
     return (
-      <div className="storybook-capture-grid" style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+      <div 
+        className="storybook-capture-grid" 
+        style={{ 
+          display: 'flex', 
+          flexDirection: 'column', 
+          gap: '2rem',
+          '--custom-bg': customizations?.bgColor || '#fcf9f2',
+          '--custom-frame': customizations?.frameColor || '#fff',
+          '--custom-font-color': customizations?.fontColor || '#333',
+          '--custom-font-family': customizations?.fontFamily || "'Caveat', cursive",
+        } as React.CSSProperties}
+      >
         {photos.map((p, index) => (
           <div className="storybook-frame" key={index}>
             <div className="storybook-photo-wrapper">
               <div className="storybook-img" style={{ backgroundImage: `url(${p.data})` }} />
             </div>
+            {p.label && <div className="photo-label handwritten">{p.label}</div>}
             <div className="storybook-controls" style={{ justifyContent: 'center' }}>
               <span className="storybook-counter handwritten">
                 {index + 1} of {photos.length}
@@ -32,7 +44,7 @@ export default function Storybook({ photos, isCapturing }: { photos: { data: str
           padding: 1rem 0;
         }
         .storybook-frame {
-          background-color: #fcf9f2;
+          background-color: var(--custom-bg);
           border: 1px solid #e8e3d3;
           border-radius: 4px 12px 12px 4px;
           box-shadow: -10px 0 20px rgba(0,0,0,0.05) inset, 0 5px 15px rgba(0,0,0,0.1);
@@ -58,7 +70,7 @@ export default function Storybook({ photos, isCapturing }: { photos: { data: str
           display: flex;
           align-items: center;
           justify-content: center;
-          background: #fff;
+          background: var(--custom-frame);
           border: 1px solid #eee;
           padding: 0.5rem;
           margin-bottom: 2rem;
@@ -78,6 +90,15 @@ export default function Storybook({ photos, isCapturing }: { photos: { data: str
         }
         .storybook-counter {
           font-size: 1.5rem;
+          color: var(--custom-font-color);
+          font-family: var(--custom-font-family) !important;
+        }
+        .photo-label {
+          text-align: center;
+          margin-bottom: 1rem;
+          font-size: 1.2rem;
+          color: var(--custom-font-color);
+          font-family: var(--custom-font-family) !important;
         }
         `}</style>
       </div>
@@ -85,7 +106,15 @@ export default function Storybook({ photos, isCapturing }: { photos: { data: str
   }
 
   return (
-    <div className="storybook-container">
+    <div 
+      className="storybook-container"
+      style={{
+        '--custom-bg': customizations?.bgColor || '#fcf9f2',
+        '--custom-frame': customizations?.frameColor || '#fff',
+        '--custom-font-color': customizations?.fontColor || '#333',
+        '--custom-font-family': customizations?.fontFamily || "'Caveat', cursive",
+      } as React.CSSProperties}
+    >
       <div className="storybook-frame">
         <div className="storybook-photo-wrapper">
           <div 
@@ -95,6 +124,12 @@ export default function Storybook({ photos, isCapturing }: { photos: { data: str
             aria-label={`Page ${currentIndex + 1}`}
           />
         </div>
+        
+        {photos[currentIndex].label && (
+          <div className="photo-label handwritten fade-in">
+            {photos[currentIndex].label}
+          </div>
+        )}
         
         <div className="storybook-controls">
           <button onClick={prev} aria-label="Previous page"><ArrowLeft /></button>
@@ -112,7 +147,7 @@ export default function Storybook({ photos, isCapturing }: { photos: { data: str
           padding: 1rem 0;
         }
         .storybook-frame {
-          background-color: #fcf9f2;
+          background-color: var(--custom-bg);
           border: 1px solid #e8e3d3;
           border-radius: 4px 12px 12px 4px;
           box-shadow: -10px 0 20px rgba(0,0,0,0.05) inset, 0 5px 15px rgba(0,0,0,0.1);
@@ -137,7 +172,7 @@ export default function Storybook({ photos, isCapturing }: { photos: { data: str
           display: flex;
           align-items: center;
           justify-content: center;
-          background: #fff;
+          background: var(--custom-frame);
           border: 1px solid #eee;
           padding: 0.5rem;
           margin-bottom: 2rem;
@@ -183,6 +218,15 @@ export default function Storybook({ photos, isCapturing }: { photos: { data: str
         }
         .storybook-counter {
           font-size: 1.5rem;
+          color: var(--custom-font-color);
+          font-family: var(--custom-font-family) !important;
+        }
+        .photo-label {
+          text-align: center;
+          margin-bottom: 1rem;
+          font-size: 1.2rem;
+          color: var(--custom-font-color);
+          font-family: var(--custom-font-family) !important;
         }
       `}</style>
     </div>

@@ -6,11 +6,13 @@ export interface AlbumData {
   note: string;
   count: number;
   createdAt: number;
+  customizations?: any;
 }
 
 export interface PhotoData {
   index: number;
   data: string; // base64
+  label?: string;
 }
 
 export interface StorageService {

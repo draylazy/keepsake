@@ -7,7 +7,7 @@ import { Camera, X, ArrowRight } from 'lucide-react';
 
 export default function Pick() {
   const navigate = useNavigate();
-  const { photos, addPhotos, removePhoto } = useAppContext();
+  const { photos, addPhotos, removePhoto, updatePhotoLabel } = useAppContext();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [progress, setProgress] = useState(0);
@@ -58,11 +58,20 @@ export default function Pick() {
 
       <div className="photo-grid">
         {photos.map((p, index) => (
-          <div key={p.id} className="photo-thumb">
-            <img src={p.data} alt={`Photo ${index + 1}`} />
-            <button className="remove-btn" onClick={() => removePhoto(p.id)} aria-label={`Remove photo ${index + 1}`}>
-              <X size={16} />
-            </button>
+          <div key={p.id} className="photo-thumb-wrapper">
+            <div className="photo-thumb">
+              <img src={p.data} alt={`Photo ${index + 1}`} />
+              <button className="remove-btn" onClick={() => removePhoto(p.id)} aria-label={`Remove photo ${index + 1}`}>
+                <X size={16} />
+              </button>
+            </div>
+            <input 
+              type="text" 
+              placeholder="Add note..." 
+              className="photo-note-input"
+              value={p.label || ''}
+              onChange={(e) => updatePhotoLabel(p.id, e.target.value)}
+            />
           </div>
         ))}
         
@@ -106,6 +115,11 @@ export default function Pick() {
           gap: 1rem;
           margin-top: 1rem;
         }
+        .photo-thumb-wrapper {
+          display: flex;
+          flex-direction: column;
+          gap: 0.5rem;
+        }
         .photo-thumb {
           position: relative;
           aspect-ratio: 1;
@@ -113,6 +127,14 @@ export default function Pick() {
           overflow: hidden;
           background: var(--card-bg);
           box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .photo-note-input {
+          width: 100%;
+          padding: 0.25rem 0.5rem;
+          font-size: 0.85rem;
+          border: 1px solid var(--line-color);
+          border-radius: 4px;
+          background: transparent;
         }
         .photo-thumb img {
           width: 100%;

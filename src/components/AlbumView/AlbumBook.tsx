@@ -1,8 +1,16 @@
 import React from 'react';
 
-export default function AlbumBook({ photos, isCapturing }: { photos: { data: string }[], isCapturing?: boolean }) {
+export default function AlbumBook({ photos, isCapturing, customizations }: { photos: { data: string; label?: string }[], isCapturing?: boolean, customizations?: any }) {
   return (
-    <div className="album-book-container">
+    <div 
+      className="album-book-container"
+      style={{
+        '--custom-bg': customizations?.bgColor || '#8c7355',
+        '--custom-frame': customizations?.frameColor || '#f4f0e6',
+        '--custom-font-color': customizations?.fontColor || '#333',
+        '--custom-font-family': customizations?.fontFamily || "'Caveat', cursive",
+      } as React.CSSProperties}
+    >
       <div className="album-book">
         {photos.map((p, i) => (
           <div key={i} className="album-page">
@@ -13,14 +21,16 @@ export default function AlbumBook({ photos, isCapturing }: { photos: { data: str
               <div className="corner bottom-right"></div>
               <img src={p.data} alt={`Page ${i + 1}`} />
             </div>
-            <div className="caption handwritten">Page {i + 1}</div>
+            <div className="caption handwritten">
+              {p.label ? p.label : `Page ${i + 1}`}
+            </div>
           </div>
         ))}
       </div>
       
       <style>{`
         .album-book-container {
-          background-color: #8c7355;
+          background-color: var(--custom-bg);
           padding: 2rem;
           border-radius: 8px;
           display: flex;
@@ -36,13 +46,14 @@ export default function AlbumBook({ photos, isCapturing }: { photos: { data: str
           border-radius: 4px;
         }
         .album-page {
-          background-color: #f4f0e6;
+          background-color: var(--custom-frame);
           width: calc(50% - 1px);
           min-width: 250px;
           padding: 2rem;
           display: flex;
           flex-direction: column;
           align-items: center;
+          justify-content: center;
           border: 1px solid #e0dcd2;
         }
         .photo-corners {
@@ -62,6 +73,13 @@ export default function AlbumBook({ photos, isCapturing }: { photos: { data: str
           height: 20px;
           background: #111;
           z-index: 2;
+        }
+        .caption {
+          font-family: var(--custom-font-family) !important;
+          color: var(--custom-font-color);
+          text-align: center;
+          margin-top: 1rem;
+          font-size: 1.2rem;
         }
         .top-left { top: 0; left: 0; clip-path: polygon(0 0, 100% 0, 0 100%); }
         .top-right { top: 0; right: 0; clip-path: polygon(0 0, 100% 0, 100% 100%); }

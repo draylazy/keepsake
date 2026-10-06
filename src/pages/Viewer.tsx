@@ -20,18 +20,37 @@ export default function Viewer() {
     if (!el) return;
     
     setDownloading(true);
-    // Wait for React to re-render the DOM with isCapturing=true
+    // Wait for React to re-render the DOM with isCapturing=true and max-content
     await new Promise(resolve => setTimeout(resolve, 150));
 
     try {
+      const isStorybook = albumData?.album.style === 'storybook';
+      let targetWidth = el.scrollWidth;
+      let targetHeight = el.scrollHeight;
+
+      if (!isStorybook) {
+        const size = Math.max(targetWidth, targetHeight);
+        el.style.width = `${size}px`;
+        el.style.height = `${size}px`;
+        el.style.display = 'flex';
+        el.style.flexDirection = 'column';
+        el.style.justifyContent = 'center';
+        el.style.alignItems = 'center';
+        
+        // Wait a tick for browser to apply new size
+        await new Promise(resolve => setTimeout(resolve, 50));
+        targetWidth = size;
+        targetHeight = size;
+      }
+
       const canvas = await html2canvas(el, { 
         useCORS: true, 
         backgroundColor: getComputedStyle(document.body).backgroundColor,
         scale: 2, // High quality
-        windowWidth: el.scrollWidth,
-        windowHeight: el.scrollHeight,
-        width: el.scrollWidth,
-        height: el.scrollHeight
+        windowWidth: targetWidth,
+        windowHeight: targetHeight,
+        width: targetWidth,
+        height: targetHeight
       });
       const img = canvas.toDataURL('image/png');
       const link = document.createElement('a');
@@ -40,8 +59,16 @@ export default function Viewer() {
       link.click();
     } catch (e) {
       console.error("Failed to capture album", e);
+    } finally {
+      if (el) {
+        el.style.display = '';
+        el.style.flexDirection = '';
+        el.style.justifyContent = '';
+        el.style.alignItems = '';
+        el.style.height = '';
+      }
+      setDownloading(false);
     }
-    setDownloading(false);
   };
 
   useEffect(() => {
@@ -90,10 +117,17 @@ export default function Viewer() {
     <div className="viewer-page">
       <div 
         id="album-capture-area" 
-        style={{ 
+        style={downloading ? { 
+          padding: '40px', 
+          background: 'var(--bg-color)', 
+          width: 'max-content',
+          minHeight: 'max-content',
+          margin: '0 auto',
+          boxSizing: 'border-box'
+        } : { 
           padding: '20px 0', 
           background: 'var(--bg-color)', 
-          width: downloading ? 'max-content' : '100%',
+          width: '100%',
           minWidth: '100%'
         }}
       >
@@ -102,8 +136,8 @@ export default function Viewer() {
           {album.note && <p className="handwritten viewer-note">{album.note}</p>}
         </div>
         
-        <div className={`viewer-content ${downloading ? '' : 'container'}`}>
-          <AlbumView style={album.style} photos={photos} isCapturing={downloading} />
+        <div className={`viewer-content ${downloading ? '' : 'container'}`} style={downloading ? { flex: 'none', width: '100%' } : {}}>
+          <AlbumView style={album.style} photos={photos} isCapturing={downloading} customizations={album.customizations} />
         </div>
       </div>
       
