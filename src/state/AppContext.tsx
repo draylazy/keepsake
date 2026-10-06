@@ -45,12 +45,12 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     setPhotos(prev => prev.filter(p => p.id !== id));
   };
 
-  const resetApp = () => {
+  const resetApp = React.useCallback(() => {
     setPhotos([]);
     setAlbumStyle('scrapbook');
     setTitle('');
     setNote('');
-  };
+  }, []);
 
   return (
     <AppContext.Provider
