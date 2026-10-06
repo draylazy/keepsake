@@ -31,7 +31,9 @@ export default function Landing() {
     for (let i = 0; i < files.length; i++) {
       try {
         const dataUrl = await resizeImage(files[i]);
-        newPhotos.push({ id: crypto.randomUUID(), data: dataUrl });
+        const fallbackId = Date.now().toString() + Math.random().toString(36).substring(2, 9);
+        const uuid = (typeof crypto !== 'undefined' && crypto.randomUUID) ? crypto.randomUUID() : fallbackId;
+        newPhotos.push({ id: uuid, data: dataUrl });
       } catch (err) {
         console.error('Failed to resize', err);
       }
