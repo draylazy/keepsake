@@ -15,7 +15,10 @@ export default function Storybook({ photos, isCapturing, customizations }: { pho
         className="storybook-capture-grid" 
         style={{ 
           display: 'flex', 
-          flexDirection: 'column', 
+          flexWrap: 'wrap',
+          justifyContent: 'center',
+          maxWidth: `${Math.ceil(Math.sqrt(photos.length)) * 550}px`,
+          margin: '0 auto',
           gap: '2rem',
           '--custom-bg': customizations?.bgColor || '#fcf9f2',
           '--custom-frame': customizations?.frameColor || '#fff',
@@ -50,9 +53,9 @@ export default function Storybook({ photos, isCapturing, customizations }: { pho
           box-shadow: -10px 0 20px rgba(0,0,0,0.05) inset, 0 5px 15px rgba(0,0,0,0.1);
           padding: 2rem;
           max-width: 500px;
-          width: 100%;
+          width: 500px;
           position: relative;
-          margin: 0 auto;
+          margin: 0;
         }
         .storybook-frame::before {
           content: '';

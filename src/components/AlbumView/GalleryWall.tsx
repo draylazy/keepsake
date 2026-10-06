@@ -11,9 +11,19 @@ export default function GalleryWall({ photos, isCapturing, customizations }: { p
         '--custom-font-family': customizations?.fontFamily || "'Caveat', cursive",
       } as React.CSSProperties}
     >
-      <div className="gallery-wall">
+      <div 
+        className="gallery-wall"
+        style={isCapturing ? {
+          display: 'flex',
+          flexWrap: 'wrap',
+          justifyContent: 'center',
+          maxWidth: `${Math.ceil(Math.sqrt(photos.length)) * 350}px`,
+          margin: '0 auto',
+          gap: '2rem'
+        } : {}}
+      >
         {photos.map((p, i) => (
-          <div key={i} className="gallery-frame-wrapper">
+          <div key={i} className="gallery-frame-wrapper" style={isCapturing ? { width: '300px', maxWidth: '300px', margin: 0 } : {}}>
             <div className="gallery-frame">
               <div className="gallery-mat">
                 <img src={p.data} alt={`Art ${i + 1}`} />

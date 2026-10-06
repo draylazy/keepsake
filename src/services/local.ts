@@ -35,7 +35,7 @@ export const localService: StorageService = {
       
       const photosStore = tx.objectStore('photos');
       for (const p of photos) {
-        photosStore.put({ code, index: p.index, data: p.data });
+        photosStore.put({ code, index: p.index, data: p.data, label: p.label || null });
       }
     });
   },
@@ -60,7 +60,7 @@ export const localService: StorageService = {
         
         resolve({
           album: albumReq.result as AlbumData,
-          photos: photos.map((p: any) => ({ index: p.index, data: p.data }))
+          photos: photos.map((p: any) => ({ index: p.index, data: p.data, label: p.label }))
         });
       };
       tx.onerror = () => reject(tx.error);

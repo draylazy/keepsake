@@ -59,6 +59,10 @@ export default function Landing() {
         </div>
       )}
       
+      <div className="header" style={{ display: 'flex', alignItems: 'center', marginBottom: '2rem', marginTop: '1rem' }}>
+        <img src="/logo-1.png" alt="Keepsake Logo" style={{ height: '80px', objectFit: 'contain' }} />
+      </div>
+      
       <div className="hero">
         <div className="hero-text">
           <h1>Make a photo album and send it to someone you love.</h1>

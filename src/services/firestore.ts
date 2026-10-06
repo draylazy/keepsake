@@ -38,7 +38,12 @@ export const firestoreService: StorageService = {
     photos.forEach(photo => {
       // document ID is just the index as string
       const photoRef = doc(db, 'albums', code, 'photos', photo.index.toString());
-      batch.set(photoRef, { index: photo.index, data: photo.data, createdAt: album.createdAt });
+      batch.set(photoRef, { 
+        index: photo.index, 
+        data: photo.data, 
+        label: photo.label || null,
+        createdAt: album.createdAt 
+      });
     });
     
     await batch.commit();

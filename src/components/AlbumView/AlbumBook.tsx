@@ -11,9 +11,19 @@ export default function AlbumBook({ photos, isCapturing, customizations }: { pho
         '--custom-font-family': customizations?.fontFamily || "'Caveat', cursive",
       } as React.CSSProperties}
     >
-      <div className="album-book">
+      <div 
+        className="album-book"
+        style={isCapturing ? {
+          display: 'flex',
+          flexWrap: 'wrap',
+          justifyContent: 'center',
+          maxWidth: `${Math.ceil(Math.sqrt(photos.length)) * 300}px`,
+          margin: '0 auto',
+          gap: '2px',
+        } : {}}
+      >
         {photos.map((p, i) => (
-          <div key={i} className="album-page">
+          <div key={i} className="album-page" style={isCapturing ? { width: '250px', minWidth: '250px', margin: 0 } : {}}>
             <div className="photo-corners">
               <div className="corner top-left"></div>
               <div className="corner top-right"></div>
