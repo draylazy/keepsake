@@ -55,6 +55,11 @@ export const localService: StorageService = {
           reject(new Error('Album not found'));
           return;
         }
+        const album = albumReq.result;
+        if (album.createdAt && album.createdAt <= Date.now() - 86400000) {
+          reject(new Error('Link Expired'));
+          return;
+        }
         // sort photos by index
         const photos = (photoReq.result || []).sort((a: any, b: any) => a.index - b.index);
         

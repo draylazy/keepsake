@@ -17,7 +17,7 @@ function generateCode() {
 export default function Share() {
   const navigate = useNavigate();
   const { photos, albumStyle, title, setTitle, note, setNote, customizations } = useAppContext();
-  
+
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState('');
   const [savedCode, setSavedCode] = useState('');
@@ -37,9 +37,9 @@ export default function Share() {
 
     setIsSaving(true);
     setError('');
-    
+
     const code = generateCode();
-    
+
     const albumData = {
       style: albumStyle,
       title: title.trim(),
@@ -48,7 +48,7 @@ export default function Share() {
       createdAt: Date.now(),
       customizations
     };
-    
+
     const photosData = photos.map((p, i) => ({
       index: i,
       data: p.data,
@@ -108,17 +108,20 @@ export default function Share() {
         <div className="header">
           <h2>Album created!</h2>
           <p>Your photos are ready to be shared.</p>
+          <p style={{ color: 'var(--accent-gold)', fontWeight: 'bold', marginTop: '0.5rem', fontSize: '0.9rem' }}>
+            ⏳ This link will automatically expire in 24 hours.
+          </p>
         </div>
-        
+
         <div className="share-success-box">
           <p style={{ marginBottom: '1rem' }}>Code: <strong>{savedCode}</strong></p>
-          
+
           <div className="link-copy-wrapper">
-            <input 
+            <input
               id="link-input"
-              type="text" 
-              readOnly 
-              value={getLink()} 
+              type="text"
+              readOnly
+              value={getLink()}
               className="link-input"
             />
             <button className="btn-primary" onClick={copyLink}>
@@ -126,7 +129,7 @@ export default function Share() {
               {copied ? 'Copied!' : 'Copy'}
             </button>
           </div>
-          
+
           <div className="share-actions">
             {typeof navigator.share === 'function' && (
               <button className="btn-secondary" onClick={shareLink}>
@@ -140,7 +143,7 @@ export default function Share() {
             </button>
           </div>
         </div>
-        
+
         <style>{`
           .share-success-box {
             background: var(--card-bg);
@@ -173,7 +176,7 @@ export default function Share() {
   return (
     <div className="container">
       <Stepper currentStep={3} />
-      
+
       <div className="header">
         <h2>Add details</h2>
       </div>
@@ -181,9 +184,9 @@ export default function Share() {
       <form onSubmit={handleSave} className="share-form">
         <div className="form-group">
           <label htmlFor="title">Album Title</label>
-          <input 
+          <input
             id="title"
-            type="text" 
+            type="text"
             value={title}
             onChange={e => setTitle(e.target.value)}
             placeholder="e.g. Our Summer Trip"
@@ -191,10 +194,10 @@ export default function Share() {
             required
           />
         </div>
-        
+
         <div className="form-group">
           <label htmlFor="note">Note (optional, max 200 chars)</label>
-          <textarea 
+          <textarea
             id="note"
             value={note}
             onChange={e => setNote(e.target.value)}
@@ -204,9 +207,9 @@ export default function Share() {
           />
           <div className="char-count">{note.length} / 200</div>
         </div>
-        
+
         {error && <div className="error-message">{error}</div>}
-        
+
         <div className="actions" style={{ display: 'flex', justifyContent: 'space-between' }}>
           <button type="button" className="btn-secondary" onClick={() => navigate('/style')} disabled={isSaving}>
             <ArrowLeft size={20} />

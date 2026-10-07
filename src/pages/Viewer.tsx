@@ -113,7 +113,11 @@ export default function Viewer() {
         setAlbumData(data);
       } catch (err: any) {
         console.error(err);
-        setError(err.message === 'Album not found' ? 'album not found' : 'Failed to load album');
+        if (err.message === 'Link Expired' || err.message?.includes('Missing or insufficient permissions') || err.code === 'permission-denied') {
+          setError('Link Expired');
+        } else {
+          setError(err.message === 'Album not found' ? 'album not found' : 'Failed to load album');
+        }
       } finally {
         setLoading(false);
       }
@@ -132,10 +136,18 @@ export default function Viewer() {
   }
 
   if (error || !albumData) {
+    let errorTitle = 'Oops!';
+    let errorMessage = error === 'album not found' ? 'We could not find an album with this code.' : error;
+    
+    if (error === 'Link Expired') {
+       errorTitle = 'Link Expired';
+       errorMessage = 'This album link has expired. For privacy, links are only valid for 24 hours after creation.';
+    }
+
     return (
       <div className="container" style={{ textAlign: 'center', paddingTop: '4rem' }}>
-        <h2>Oops!</h2>
-        <p>{error === 'album not found' ? 'We could not find an album with this code.' : error}</p>
+        <h2>{errorTitle}</h2>
+        <p>{errorMessage}</p>
         <button className="btn-primary" onClick={() => navigate('/')} style={{ marginTop: '2rem' }}>
           Go to Homepage
         </button>
@@ -144,9 +156,15 @@ export default function Viewer() {
   }
 
   const { album, photos } = albumData;
+  const hoursLeft = Math.max(0, Math.floor((album.createdAt + 86400000 - Date.now()) / 3600000));
 
   return (
     <div className="viewer-page">
+      {!downloading && (
+        <div className="expiration-banner">
+          This link expires in {hoursLeft} {hoursLeft === 1 ? 'hour' : 'hours'}.
+        </div>
+      )}
       <div 
         id="album-capture-area" 
         style={downloading ? { 
@@ -237,6 +255,18 @@ export default function Viewer() {
         @keyframes loading {
           0% { background-position: 200% 0; }
           100% { background-position: -200% 0; }
+        }
+        .expiration-banner {
+          background-color: var(--accent-gold);
+          color: #fff;
+          text-align: center;
+          padding: 0.5rem;
+          font-weight: bold;
+          font-size: 0.9rem;
+          position: sticky;
+          top: 0;
+          z-index: 100;
+          box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
       `}</style>
       
