@@ -113,6 +113,7 @@ export default function Landing() {
           <div className="tilted-card card-3">
             <div className="placeholder-img" style={{backgroundColor: '#e3a63a', opacity: 0.8}}></div>
             <div className="caption handwritten">Add yours</div>
+            <div className="handwritten" style={{ fontSize: '1.2rem', color: 'var(--text-color)', opacity: 0.6, textAlign: 'center', marginTop: '-5px' }}>by draylazy</div>
           </div>
         </div>
       </div>
