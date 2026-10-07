@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppContext } from '../state/AppContext';
 import type { AlbumStyle } from '../state/AppContext';
@@ -29,6 +29,27 @@ export default function StyleSelector() {
   // In the preview, we just need `data` and an index.
   const previewPhotos = photos.map((p, i) => ({ ...p, index: i }));
 
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [scale, setScale] = useState(1);
+
+  useEffect(() => {
+    const calculateScale = () => {
+      if (containerRef.current) {
+        // The downloaded image is always 1200px wide.
+        // We scale it down to fit the current screen/container width if it's smaller.
+        const parentWidth = containerRef.current.clientWidth || window.innerWidth;
+        if (parentWidth < 1200) {
+          setScale(parentWidth / 1200);
+        } else {
+          setScale(1);
+        }
+      }
+    };
+    calculateScale();
+    window.addEventListener('resize', calculateScale);
+    return () => window.removeEventListener('resize', calculateScale);
+  }, []);
+
   return (
     <div className="style-page">
       <div className="container">
@@ -52,8 +73,10 @@ export default function StyleSelector() {
         </div>
       </div>
 
-      <div className="preview-container">
-        <AlbumView style={albumStyle} photos={previewPhotos} customizations={customizations} />
+      <div className="preview-container" ref={containerRef} style={{ width: '100%', overflow: 'hidden', display: 'flex', justifyContent: 'center' }}>
+        <div style={{ zoom: scale, width: '1200px', transformOrigin: 'top center' }}>
+          <AlbumView style={albumStyle} photos={previewPhotos} customizations={customizations} isCapturing={true} />
+        </div>
       </div>
 
       <div className="container">

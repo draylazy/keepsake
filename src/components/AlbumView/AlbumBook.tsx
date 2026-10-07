@@ -16,7 +16,7 @@ export default function AlbumBook({ photos, isCapturing, customizations }: { pho
   return (
     <div className="album-book-wrapper">
       <div 
-        className="album-book-container"
+        className={`album-book-container ${!isCapturing ? 'preview-mode' : ''}`}
         style={{
           '--custom-bg': customizations?.bgColor || '#8c7355',
           '--custom-frame': customizations?.frameColor || '#f4f0e6',
@@ -160,6 +160,13 @@ export default function AlbumBook({ photos, isCapturing, customizations }: { pho
           font-weight: bold;
           color: var(--text-color);
           font-size: 1.1rem;
+        }
+        @media (max-width: 600px) {
+          .album-book-container.preview-mode .album-book-page {
+            grid-template-columns: 1fr;
+            grid-template-rows: auto;
+            padding: 1rem;
+          }
         }
       `}</style>
     </div>

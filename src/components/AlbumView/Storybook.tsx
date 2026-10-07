@@ -110,7 +110,7 @@ export default function Storybook({ photos, isCapturing, customizations }: { pho
 
   return (
     <div 
-      className="storybook-container"
+      className={`storybook-container ${!isCapturing ? 'preview-mode' : ''}`}
       style={{
         '--custom-bg': customizations?.bgColor || '#fcf9f2',
         '--custom-frame': customizations?.frameColor || '#fff',
@@ -230,6 +230,17 @@ export default function Storybook({ photos, isCapturing, customizations }: { pho
           font-size: 1.2rem;
           color: var(--custom-font-color);
           font-family: var(--custom-font-family) !important;
+        }
+        @media (max-width: 600px) {
+          .storybook-container.preview-mode .storybook-frame {
+            padding: 1rem;
+          }
+          .storybook-container.preview-mode .storybook-img {
+            min-height: 250px;
+          }
+          .storybook-container.preview-mode .storybook-counter {
+            font-size: 1.2rem;
+          }
         }
       `}</style>
     </div>

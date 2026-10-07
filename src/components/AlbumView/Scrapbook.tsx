@@ -8,7 +8,7 @@ export default function Scrapbook({ photos, isCapturing, customizations }: { pho
 
   return (
       <div 
-        className="scrapbook-container"
+        className={`scrapbook-container ${!isCapturing ? 'preview-mode' : ''}`}
         style={{
           ...(isCapturing ? {
             display: 'flex',
@@ -85,6 +85,17 @@ export default function Scrapbook({ photos, isCapturing, customizations }: { pho
         @media (prefers-color-scheme: dark) {
           .scrapbook-photo {
             /* keep custom frame if set, fallback is handled */
+          }
+        }
+        @media (max-width: 768px) {
+          .scrapbook-container.preview-mode {
+            padding: 1rem;
+            gap: 1rem;
+          }
+          .scrapbook-container.preview-mode .scrapbook-photo {
+            max-width: 100%;
+            width: 90% !important;
+            margin: 0 auto;
           }
         }
       `}</style>

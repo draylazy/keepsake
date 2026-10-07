@@ -22,7 +22,7 @@ export default function GalleryWall({ photos, isCapturing, customizations }: { p
 
   return (
     <div 
-      className="gallery-wall-container"
+      className={`gallery-wall-container ${!isCapturing ? 'preview-mode' : ''}`}
       style={{
         '--custom-bg': customizations?.bgColor || '#5a6660',
         '--custom-frame': customizations?.frameColor || '#faf9f5',
@@ -164,6 +164,23 @@ export default function GalleryWall({ photos, isCapturing, customizations }: { p
           font-size: 1.2rem;
           color: var(--custom-font-color);
           font-family: var(--custom-font-family) !important;
+        }
+        @media (max-width: 600px) {
+          .gallery-wall-container.preview-mode .layout-scattered,
+          .gallery-wall-container.preview-mode .layout-dynamic,
+          .gallery-wall-container.preview-mode .layout-classic {
+            grid-template-columns: 1fr !important;
+            padding: 1rem 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+          }
+          .gallery-wall-container.preview-mode .gallery-frame-wrapper {
+            width: 90% !important;
+            margin: 0 auto;
+            transform: none !important; /* Remove rotation on mobile for better viewing */
+            margin-bottom: 2rem !important;
+          }
         }
       `}</style>
     </div>
