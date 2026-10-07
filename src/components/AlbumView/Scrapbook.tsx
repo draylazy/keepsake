@@ -1,6 +1,11 @@
 import React from 'react';
 
 export default function Scrapbook({ photos, isCapturing, customizations }: { photos: { data: string; label?: string }[], isCapturing?: boolean, customizations?: any }) {
+  const rawTapeColor = customizations?.tapeColor || 'rgba(255, 255, 255, 0.45)';
+  const transparentTapeColor = rawTapeColor.startsWith('#') && rawTapeColor.length === 7 
+    ? `${rawTapeColor}73` 
+    : rawTapeColor;
+
   return (
       <div 
         className="scrapbook-container"
@@ -9,13 +14,14 @@ export default function Scrapbook({ photos, isCapturing, customizations }: { pho
             display: 'flex',
             flexWrap: 'wrap',
             justifyContent: 'center',
-            maxWidth: `${Math.ceil(Math.sqrt(photos.length)) * 290}px`,
+            maxWidth: '1200px',
             margin: '0 auto',
           } : {}),
           '--custom-bg': customizations?.bgColor || 'var(--line-color)',
           '--custom-frame': customizations?.frameColor || '#fff',
           '--custom-font-color': customizations?.fontColor || '#333',
           '--custom-font-family': customizations?.fontFamily || "'Caveat', cursive",
+          '--custom-tape': transparentTapeColor,
         } as React.CSSProperties}
       >
         {photos.map((p, i) => {
@@ -72,7 +78,7 @@ export default function Scrapbook({ photos, isCapturing, customizations }: { pho
           transform: translateX(-50%) rotate(-2deg);
           width: 80px;
           height: 25px;
-          background-color: rgba(255, 255, 255, 0.6);
+          background-color: var(--custom-tape);
           box-shadow: 0 1px 3px rgba(0,0,0,0.1);
           z-index: 2;
         }

@@ -1,6 +1,25 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 
 export default function GalleryWall({ photos, isCapturing, customizations }: { photos: { data: string; label?: string }[], isCapturing?: boolean, customizations?: any }) {
+  const layout = customizations?.galleryLayout || 'scattered';
+  const seed = customizations?.gallerySeed || 0;
+
+  const displayedPhotos = useMemo(() => {
+    if (!seed) return photos;
+    
+    const shuffled = [...photos];
+    let s = Math.floor(seed * 1000000);
+    
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      s = (s * 9301 + 49297) % 233280;
+      const rand = s / 233280;
+      const j = Math.floor(rand * (i + 1));
+      
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled;
+  }, [photos, seed]);
+
   return (
     <div 
       className="gallery-wall-container"
@@ -12,18 +31,15 @@ export default function GalleryWall({ photos, isCapturing, customizations }: { p
       } as React.CSSProperties}
     >
       <div 
-        className="gallery-wall"
+        className={`gallery-wall layout-${layout}`}
         style={isCapturing ? {
-          display: 'flex',
-          flexWrap: 'wrap',
-          justifyContent: 'center',
-          maxWidth: `${Math.ceil(Math.sqrt(photos.length)) * 350}px`,
+          maxWidth: '1500px',
           margin: '0 auto',
-          gap: '2rem'
+          padding: '2rem'
         } : {}}
       >
-        {photos.map((p, i) => (
-          <div key={i} className="gallery-frame-wrapper" style={isCapturing ? { width: '300px', maxWidth: '300px', margin: 0 } : {}}>
+        {displayedPhotos.map((p, i) => (
+          <div key={i} className="gallery-frame-wrapper">
             <div className="gallery-frame">
               <div className="gallery-mat">
                 <img src={p.data} alt={`Art ${i + 1}`} />
@@ -40,26 +56,91 @@ export default function GalleryWall({ photos, isCapturing, customizations }: { p
           background-color: var(--custom-bg);
           border-radius: 8px;
         }
-        .gallery-wall {
+        
+        /* SCATTERED LAYOUT */
+        .layout-scattered {
           display: flex;
           flex-wrap: wrap;
-          gap: 2rem;
+          gap: 3rem;
           justify-content: center;
-          align-items: flex-start;
+          align-items: center;
+          padding: 2rem 0;
         }
-        .gallery-frame-wrapper {
+        .layout-scattered .gallery-frame-wrapper {
+          width: 250px;
+          transition: transform 0.3s;
+        }
+        .layout-scattered .gallery-frame-wrapper:nth-child(2n) {
+          width: 200px;
+          transform: translateY(30px);
+        }
+        .layout-scattered .gallery-frame-wrapper:nth-child(3n) {
+          width: 280px;
+          transform: translateY(-20px);
+        }
+        .layout-scattered .gallery-frame-wrapper:nth-child(4n) {
+          width: 220px;
+          transform: translateY(15px);
+        }
+        .layout-scattered .gallery-frame-wrapper:nth-child(5n) {
+          width: 260px;
+          transform: translateY(-30px);
+        }
+        .layout-scattered .gallery-frame-wrapper:hover {
+          z-index: 10;
+        }
+
+        /* DYNAMIC GRID LAYOUT */
+        .layout-dynamic {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+          gap: 2rem;
+          padding: 2rem 0;
+          align-items: center;
+        }
+        @media (min-width: 768px) {
+          .layout-dynamic {
+            grid-template-columns: repeat(4, 1fr);
+          }
+          .layout-dynamic .gallery-frame-wrapper:nth-child(5n+1) {
+            grid-column: span 2;
+            grid-row: span 2;
+          }
+          .layout-dynamic .gallery-frame-wrapper:nth-child(5n+4) {
+            grid-column: span 2;
+          }
+        }
+        .layout-dynamic .gallery-frame-wrapper {
           width: 100%;
-          margin-bottom: 1rem;
+          height: 100%;
+          display: flex;
+          align-items: center;
         }
-        @media (min-width: 600px) {
-          .gallery-frame-wrapper {
-            width: calc(50% - 1rem);
-          }
+
+        /* MASONRY LAYOUT */
+        .layout-masonry {
+          column-count: 1;
+          column-gap: 2rem;
+          padding: 2rem 0;
         }
-        @media (min-width: 900px) {
-          .gallery-frame-wrapper {
-            width: calc(33.333% - 1.33rem);
-          }
+        @media (min-width: 600px) { .layout-masonry { column-count: 2; } }
+        @media (min-width: 900px) { .layout-masonry { column-count: 3; } }
+        @media (min-width: 1200px) { .layout-masonry { column-count: 4; } }
+        .layout-masonry .gallery-frame-wrapper {
+          break-inside: avoid;
+          margin-bottom: 2rem;
+          width: 100%;
+        }
+
+        /* CLASSIC LAYOUT */
+        .layout-classic {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+          gap: 2rem;
+          padding: 2rem 0;
+        }
+        .layout-classic .gallery-frame-wrapper {
+          width: 100%;
         }
         .gallery-frame {
           background-color: #111; /* frame color */

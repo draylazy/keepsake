@@ -181,13 +181,15 @@ export default function Viewer() {
           minWidth: '100%'
         }}
       >
-        <div className={`viewer-header ${downloading ? '' : 'container'}`}>
-          <h1>{album.title}</h1>
-          {album.note && <p className="handwritten viewer-note">{album.note}</p>}
-        </div>
-        
-        <div className={`viewer-content ${downloading ? '' : 'container'}`} style={downloading ? { flex: 'none', width: '100%' } : {}}>
-          <AlbumView style={album.style} photos={photos} isCapturing={downloading} customizations={album.customizations} />
+        <div className={downloading ? '' : 'viewer-container'}>
+          <div className="viewer-header">
+            <h1>{album.title}</h1>
+            {album.note && <p className="handwritten viewer-note">{album.note}</p>}
+          </div>
+          
+          <div className="viewer-content">
+            <AlbumView style={album.style} photos={photos} isCapturing={downloading} customizations={album.customizations} />
+          </div>
         </div>
       </div>
       
@@ -206,10 +208,19 @@ export default function Viewer() {
       </div>
       
       <style>{`
+        /* Push theme toggle down in viewer to avoid colliding with banner */
+        .theme-toggle {
+          top: 4rem !important;
+        }
         .viewer-page {
           min-height: 100vh;
           display: flex;
           flex-direction: column;
+        }
+        .viewer-container {
+          max-width: 1200px;
+          margin: 0 auto;
+          padding: 0 1rem;
         }
         .viewer-header {
           text-align: center;

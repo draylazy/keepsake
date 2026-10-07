@@ -14,6 +14,9 @@ export interface Customizations {
   bgColor: string;
   fontColor: string;
   fontFamily: string;
+  tapeColor?: string;
+  galleryLayout?: string;
+  gallerySeed?: number;
 }
 
 interface AppContextType {
@@ -34,7 +37,7 @@ interface AppContextType {
   
   customizations: Customizations;
   setCustomizations: React.Dispatch<React.SetStateAction<Customizations>>;
-  updateCustomization: (key: keyof Customizations, value: string) => void;
+  updateCustomization: <K extends keyof Customizations>(key: K, value: Customizations[K]) => void;
   
   resetApp: () => void;
 }
@@ -68,7 +71,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     setPhotos(prev => prev.map(p => p.id === id ? { ...p, label } : p));
   };
 
-  const updateCustomization = (key: keyof Customizations, value: string) => {
+  const updateCustomization = <K extends keyof Customizations>(key: K, value: Customizations[K]) => {
     setCustomizations(prev => ({ ...prev, [key]: value }));
   };
 

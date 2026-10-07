@@ -30,84 +30,146 @@ export default function StyleSelector() {
   const previewPhotos = photos.map((p, i) => ({ ...p, index: i }));
 
   return (
-    <div className="container">
-      <Stepper currentStep={2} />
-      
-      <div className="header">
-        <h2>Choose a style</h2>
-      </div>
+    <div className="style-page">
+      <div className="container">
+        <Stepper currentStep={2} />
+        
+        <div className="header">
+          <h2>Choose a style</h2>
+        </div>
 
-      <div className="style-toggles" role="group" aria-label="Album styles">
-        {styles.map(s => (
-          <button
-            key={s.id}
-            className={`style-btn ${albumStyle === s.id ? 'active' : ''}`}
-            aria-pressed={albumStyle === s.id}
-            onClick={() => setAlbumStyle(s.id)}
-          >
-            {s.label}
-          </button>
-        ))}
+        <div className="style-toggles" role="group" aria-label="Album styles">
+          {styles.map(s => (
+            <button
+              key={s.id}
+              className={`style-btn ${albumStyle === s.id ? 'active' : ''}`}
+              aria-pressed={albumStyle === s.id}
+              onClick={() => setAlbumStyle(s.id)}
+            >
+              {s.label}
+            </button>
+          ))}
+        </div>
       </div>
 
       <div className="preview-container">
         <AlbumView style={albumStyle} photos={previewPhotos} customizations={customizations} />
       </div>
 
-      <div className="customization-panel">
-        <h3>Customize Appearance</h3>
-        <div className="customization-grid">
-          <div className="customization-item">
-            <label>Frame Color</label>
-            <input 
-              type="color" 
-              value={customizations.frameColor} 
-              onChange={e => updateCustomization('frameColor', e.target.value)} 
-            />
+      <div className="container">
+        <div className="customization-panel">
+          <h3>Customize Appearance</h3>
+          <div className="customization-grid">
+            <div className="customization-item">
+              <label>Frame Color</label>
+              <input 
+                type="color" 
+                value={customizations.frameColor} 
+                onChange={e => updateCustomization('frameColor', e.target.value)} 
+              />
+            </div>
+            <div className="customization-item">
+              <label>Background Color</label>
+              <input 
+                type="color" 
+                value={customizations.bgColor || '#5a6660'} 
+                onChange={e => updateCustomization('bgColor', e.target.value)} 
+              />
+            </div>
+            <div className="customization-item">
+              <label>Font Color</label>
+              <input 
+                type="color" 
+                value={customizations.fontColor} 
+                onChange={e => updateCustomization('fontColor', e.target.value)} 
+              />
+            </div>
+            <div className="customization-item">
+              <label>Font Family</label>
+              <select 
+                value={customizations.fontFamily} 
+                onChange={e => updateCustomization('fontFamily', e.target.value)}
+              >
+                <option value="'Caveat', cursive">Handwritten (Caveat)</option>
+                <option value="serif">Serif</option>
+                <option value="sans-serif">Sans-serif</option>
+                <option value="monospace">Monospace</option>
+              </select>
+            </div>
+            
+            {albumStyle === 'scrapbook' && (
+              <div className="customization-item">
+                <label>Tape Color</label>
+                <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                  <input 
+                    type="color" 
+                    value={customizations.tapeColor || '#ffffff'} 
+                    onChange={e => updateCustomization('tapeColor', e.target.value)} 
+                    style={{ width: '40px', height: '40px', padding: '0', cursor: 'pointer' }}
+                  />
+                  <span style={{ fontSize: '0.9rem', color: 'var(--text-color)' }}>
+                    Semi-transparent by default
+                  </span>
+                </div>
+              </div>
+            )}
+            
+            {albumStyle === 'gallerywall' && (
+              <div className="customization-item" style={{ gridColumn: '1 / -1' }}>
+                <label>Gallery Layout Template</label>
+                <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', marginTop: '0.5rem', marginBottom: '1rem' }}>
+                  {[
+                    { id: 'scattered', label: 'Scattered' },
+                    { id: 'dynamic', label: 'Dynamic Grid' },
+                    { id: 'masonry', label: 'Masonry Columns' },
+                    { id: 'classic', label: 'Classic Grid' }
+                  ].map(layout => (
+                    <button 
+                      key={layout.id}
+                      className={`btn-secondary ${customizations.galleryLayout === layout.id || (!customizations.galleryLayout && layout.id === 'scattered') ? 'active' : ''}`}
+                      style={{ flex: 1, minWidth: '150px' }}
+                      onClick={() => updateCustomization('galleryLayout', layout.id)}
+                    >
+                      {layout.label}
+                    </button>
+                  ))}
+                </div>
+                
+                <label>Picture Placement</label>
+                <div>
+                  <button 
+                    className="btn-secondary" 
+                    onClick={() => updateCustomization('gallerySeed', Math.random())}
+                  >
+                    Shuffle Picture Positions
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
-          <div className="customization-item">
-            <label>Background Color</label>
-            <input 
-              type="color" 
-              value={customizations.bgColor || '#5a6660'} 
-              onChange={e => updateCustomization('bgColor', e.target.value)} 
-            />
-          </div>
-          <div className="customization-item">
-            <label>Font Color</label>
-            <input 
-              type="color" 
-              value={customizations.fontColor} 
-              onChange={e => updateCustomization('fontColor', e.target.value)} 
-            />
-          </div>
-          <div className="customization-item">
-            <label>Font Family</label>
-            <select 
-              value={customizations.fontFamily} 
-              onChange={e => updateCustomization('fontFamily', e.target.value)}
-            >
-              <option value="'Caveat', cursive">Handwritten (Caveat)</option>
-              <option value="serif">Serif</option>
-              <option value="sans-serif">Sans-serif</option>
-              <option value="monospace">Monospace</option>
-            </select>
-          </div>
+        </div>
+
+        <div className="actions" style={{ marginTop: '2rem', display: 'flex', justifyContent: 'space-between' }}>
+          <button className="btn-secondary" onClick={() => navigate('/pick')}>
+            <ArrowLeft size={20} />
+            Back
+          </button>
+          <button className="btn-primary" onClick={() => navigate('/share')}>
+            Next: Add details
+            <ArrowRight size={20} />
+          </button>
         </div>
       </div>
 
-      <div className="actions" style={{ marginTop: '2rem', display: 'flex', justifyContent: 'space-between' }}>
-        <button className="btn-secondary" onClick={() => navigate('/pick')}>
-          <ArrowLeft size={20} />
-          Back
-        </button>
-        <button className="btn-primary" onClick={() => navigate('/share')}>
-          Next: Add details
-          <ArrowRight size={20} />
-        </button>
-      </div>
-
       <style>{`
+        .style-page {
+          min-height: 100vh;
+        }
+        .preview-container {
+          max-width: 1200px;
+          margin: 0 auto;
+          padding: 0 1rem;
+        }
         .style-toggles {
           display: flex;
           flex-wrap: wrap;

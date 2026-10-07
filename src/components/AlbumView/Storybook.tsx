@@ -17,7 +17,7 @@ export default function Storybook({ photos, isCapturing, customizations }: { pho
           display: 'flex', 
           flexWrap: 'wrap',
           justifyContent: 'center',
-          maxWidth: `${Math.ceil(Math.sqrt(photos.length)) * 550}px`,
+          maxWidth: '2150px',
           margin: '0 auto',
           gap: '2rem',
           '--custom-bg': customizations?.bgColor || '#fcf9f2',

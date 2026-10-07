@@ -133,6 +133,12 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
   color: #E3A654;
 }
 
+.btn-secondary.active {
+  background-color: var(--btn-primary-bg);
+  color: var(--btn-primary-text);
+  border-color: var(--btn-primary-bg);
+}
+
 input[type="text"], textarea, select {
   width: 100%;
   padding: 0.75rem;

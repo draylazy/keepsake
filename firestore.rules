@@ -29,9 +29,8 @@ service cloud.firestore {
       allow delete: if resource.data.createdAt <= request.time.toMillis() - 86400000;
       
       match /photos/{index} {
-        // Anyone can read the photos if they are less than 24h old
-        allow get: if resource.data.createdAt > request.time.toMillis() - 86400000;
-        allow list: if resource.data.createdAt <= request.time.toMillis() - 86400000;
+        // Allow get and list. Cleanup needs to list expired, Viewer needs to list fresh.
+        allow get, list: if true;
         
         // Allow creation for signed-in users
         allow create: if request.auth != null
