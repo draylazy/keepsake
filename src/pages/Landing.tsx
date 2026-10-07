@@ -60,7 +60,8 @@ export default function Landing() {
       )}
       
       <div className="header" style={{ display: 'flex', alignItems: 'center', marginBottom: '2rem', marginTop: '1rem' }}>
-        <img src="/logo-1.png" alt="Keepsake Logo" style={{ height: '80px', objectFit: 'contain' }} />
+        <img src="/logo-3.png" alt="Keepsake Logo" className="logo-dark" style={{ height: '100px', objectFit: 'contain' }} />
+        <img src="/logo-4.png" alt="Keepsake Logo" className="logo-light" style={{ height: '100px', objectFit: 'contain' }} />
       </div>
       
       <div className="hero">

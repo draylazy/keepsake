@@ -12,9 +12,8 @@
       (function() {
         try {
           var savedTheme = localStorage.getItem('keepsake-theme');
-          if (savedTheme && savedTheme !== 'system') {
-            document.documentElement.setAttribute('data-theme', savedTheme);
-          }
+          var initialTheme = (savedTheme === 'dark') ? 'dark' : 'light';
+          document.documentElement.setAttribute('data-theme', initialTheme);
         } catch (e) {}
       })();
     </script>

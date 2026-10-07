@@ -2,41 +2,25 @@ import React, { useEffect, useState } from 'react';
 import { Moon, Sun } from 'lucide-react';
 
 export default function ThemeToggle() {
-  const [theme, setTheme] = useState<'light' | 'dark' | 'system'>('system');
+  const [theme, setTheme] = useState<'light' | 'dark'>('light');
 
   useEffect(() => {
     // Check local storage on mount
     const savedTheme = localStorage.getItem('keepsake-theme') as 'light' | 'dark' | 'system' | null;
-    if (savedTheme) {
-      setTheme(savedTheme);
-      if (savedTheme !== 'system') {
-        document.documentElement.setAttribute('data-theme', savedTheme);
-      } else {
-        document.documentElement.removeAttribute('data-theme');
-      }
-    }
+    
+    // If no theme or it was set to system previously, default to light
+    const initialTheme = (savedTheme === 'dark') ? 'dark' : 'light';
+    
+    setTheme(initialTheme);
+    document.documentElement.setAttribute('data-theme', initialTheme);
+    localStorage.setItem('keepsake-theme', initialTheme);
   }, []);
 
   const toggleTheme = () => {
-    let nextTheme: 'light' | 'dark' | 'system' = 'system';
-    
-    // Cycle logic: System -> Light -> Dark -> System
-    if (theme === 'system') {
-      nextTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'light' : 'dark';
-    } else if (theme === 'light') {
-      nextTheme = 'dark';
-    } else {
-      nextTheme = 'system'; // Or loop back to light if preferred
-    }
-
+    const nextTheme = theme === 'light' ? 'dark' : 'light';
     setTheme(nextTheme);
     localStorage.setItem('keepsake-theme', nextTheme);
-    
-    if (nextTheme === 'system') {
-      document.documentElement.removeAttribute('data-theme');
-    } else {
-      document.documentElement.setAttribute('data-theme', nextTheme);
-    }
+    document.documentElement.setAttribute('data-theme', nextTheme);
   };
 
   return (
@@ -46,7 +30,7 @@ export default function ThemeToggle() {
       aria-label="Toggle theme"
       title={`Current theme: ${theme}`}
     >
-      {theme === 'light' ? <Sun size={20} /> : theme === 'dark' ? <Moon size={20} /> : <div style={{position: 'relative'}}><Sun size={20} style={{clipPath: 'polygon(0 0, 50% 0, 50% 100%, 0% 100%)', position: 'absolute', left: 0}}/><Moon size={20} style={{clipPath: 'polygon(50% 0, 100% 0, 100% 100%, 50% 100%)'}}/></div>}
+      {theme === 'light' ? <Moon size={20} /> : <Sun size={20} />}
       
       <style>{`
         .theme-toggle {

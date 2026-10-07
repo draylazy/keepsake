@@ -193,3 +193,9 @@ input::placeholder, textarea::placeholder {
   white-space: nowrap;
   border-width: 0;
 }
+
+
+/* Logo Theme Switching */
+html[data-theme='dark'] .logo-light { display: none; }
+html:not([data-theme='dark']) .logo-dark { display: none; }
+
